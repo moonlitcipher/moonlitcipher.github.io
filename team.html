@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Moonlitcipher | Elite CTF Team</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --joker-purple: #8000ff;
+            --joker-green: #00ff41;
+            --joker-teal: #00ffcc;
+            --joker-pink: #ff00aa;
+            --dark-bg: #0a0a0a;
+        }
+        
+        body {
+            font-family: 'IBM Plex Mono', monospace;
+            background-color: var(--dark-bg);
+            color: #e5e5e5;
+            overflow-x: hidden;
+        }
+        
+        .crt-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%),
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.15;
+        }
+        
+        .joker-border {
+            border: 1px solid #333;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .joker-border::before {
+            content: "";
+            position: absolute;
+            top: -1px; left: -1px;
+            width: 8px; height: 8px;
+            border-top: 2px solid var(--joker-green);
+            border-left: 2px solid var(--joker-green);
+        }
+        
+        .joker-border::after {
+            content: "";
+            position: absolute;
+            bottom: -1px; right: -1px;
+            width: 8px; height: 8px;
+            border-bottom: 2px solid var(--joker-purple);
+            border-right: 2px solid var(--joker-purple);
+        }
+        
+        .blinking-cursor::after {
+            content: "█";
+            animation: blink 1s step-end infinite;
+            color: var(--joker-green);
+        }
+        
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+        
+        .glow-text {
+            text-shadow: 0 0 10px currentColor;
+        }
+        
+        .neon-purple {
+            color: var(--joker-purple);
+            text-shadow: 0 0 10px var(--joker-purple);
+        }
+        
+        .neon-green {
+            color: var(--joker-green);
+            text-shadow: 0 0 10px var(--joker-green);
+        }
+        
+        .neon-pink {
+            color: var(--joker-pink);
+            text-shadow: 0 0 10px var(--joker-pink);
+        }
+        
+        .neon-teal {
+            color: var(--joker-teal);
+            text-shadow: 0 0 10px var(--joker-teal);
+        }
+        
+        .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(128, 0, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(128, 0, 255, 0.05) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+        
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            animation: typing 3.5s steps(40, end);
+        }
+        
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+        
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+        
+        @keyframes pulse-glow {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        
+        .hacker-terminal {
+            background: #050505;
+            border: 1px solid rgba(0, 255, 65, 0.2);
+            box-shadow: 0 0 20px rgba(0, 255, 65, 0.1);
+        }
+        
+        .core-member-badge {
+            background: linear-gradient(135deg, rgba(128, 0, 255, 0.2), rgba(0, 255, 65, 0.1));
+            border: 1px solid var(--joker-purple);
+            color: var(--joker-green);
+        }
+        
+        .member-badge {
+            background-color: rgba(128, 0, 255, 0.1);
+            border: 1px solid rgba(128, 0, 255, 0.3);
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .ctf-card {
+            transition: all 0.3s ease;
+        }
+        
+        .ctf-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(128, 0, 255, 0.2);
+        }
+        
+        .social-icon {
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            transform: translateY(-2px);
+        }
+        
+        .github-icon:hover {
+            color: #ffffff;
+            background-color: #333;
+        }
+        
+        .linkedin-icon:hover {
+            color: #0077b5;
+            background-color: rgba(0, 119, 181, 0.1);
+        }
+        
+        .ctftime-icon:hover {
+            color: #ff6b00;
+            background-color: rgba(255, 107, 0, 0.1);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "joker-purple": "#8000ff",
+                        "joker-green": "#00ff41",
+                        "joker-teal": "#00ffcc",
+                        "joker-pink": "#ff00aa",
+                        "background-dark": "#0a0a0a",
+                        "card-dark": "#111111",
+                        "border-dim": "#333333",
+                    },
+                    fontFamily: {
+                        "mono": ["IBM Plex Mono", "monospace"]
+                    },
+                    animation: {
+                        'marquee': 'marquee 20s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-glow': 'pulse-glow 2s infinite',
+                    },
+                    keyframes: {
+                        marquee: {
+                            '0%': { transform: 'translateX(0%)' },
+                            '100%': { transform: 'translateX(-50%)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        'pulse-glow': {
+                            '0%, 100%': { opacity: 1 },
+                            '50%': { opacity: 0.7 }
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-dark text-slate-300">
+    <!-- CRT Overlay Effect -->
+    <div class="crt-overlay"></div>
+    
+    <!-- Header -->
+    <header class="fixed top-0 z-50 w-full border-b border-gray-900 bg-background-dark/95 backdrop-blur-sm">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="neon-green font-bold text-lg">&gt;_</span>
+                <h1 class="font-mono font-bold text-xl tracking-tight text-white uppercase">
+                    <span class="neon-purple glow-text">MOONLIT</span>CIPHER
+                    <span class="neon-green blink">_</span>
+                </h1>
+            </div>
+            <nav class="hidden md:flex items-center gap-8 text-xs tracking-widest uppercase">
+                <a class="text-slate-400 hover:text-joker-green transition-colors font-medium" href="#home">[01] Home</a>
+                <a class="text-slate-400 hover:text-joker-purple transition-colors font-medium" href="#ctfs">[02] CTF Records</a>
+                <a class="text-slate-400 hover:text-joker-pink transition-colors font-medium" href="#members">[03] Members</a>
+                <a class="text-slate-400 hover:text-joker-teal transition-colors font-medium" href="#skills">[04] Skills</a>
+                <a class="text-slate-400 hover:text-joker-green transition-colors font-medium" href="#contact">[05] Contact</a>
+            </nav>
+            <div class="flex items-center gap-4">
+                <div class="hidden md:flex items-center gap-2 text-[10px] neon-green/60 font-mono border border-joker-green/20 px-2 py-1 bg-joker-green/5">
+                    <span class="w-2 h-2 rounded-full bg-joker-green animate-pulse"></span>
+                    CTFTIME ID: 382459
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-32 pb-32 min-h-screen flex flex-col justify-center border-b border-border-dim overflow-hidden">
+        <div class="absolute inset-0 grid-pattern opacity-20 pointer-events-none"></div>
+        <div class="max-w-7xl mx-auto px-6 relative z-10 w-full">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 flex flex-col items-start text-left">
+                    <div class="mb-6 inline-flex items-center gap-2 neon-pink text-xs font-mono tracking-widest uppercase">
+                        // ELITE CTF Team • CTFtime ID: 382459 • 29+ Events • 77,800+ Points
+                    </div>
+                    <h1 class="font-mono text-5xl md:text-7xl font-bold mb-8 tracking-tighter text-white leading-none">
+                        <span class="neon-purple glow-text">CRACKING</span><br/>
+                        <span class="neon-green glow-text">THE NIGHT</span>
+                        <span class="neon-purple">.</span>
+                    </h1>
+                    <p class="max-w-xl text-slate-400 text-lg mb-10 leading-relaxed border-l-2 border-joker-green/30 pl-6">
+                        Elite CTF team specializing in cryptography, web exploitation, binary analysis, and forensics. 
+                        With participation across 29+ competitions, 77,800+ CTF points, and multiple top-30 finishes.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button class="group px-8 py-4 bg-transparent border border-joker-green text-joker-green hover:bg-joker-green hover:text-black font-bold font-mono uppercase tracking-wider transition-all relative overflow-hidden">
+                            <span class="relative z-10 flex items-center gap-2">Join The Team <span class="material-symbols-outlined text-sm group-hover:translate-x-1 transition-transform">arrow_forward</span></span>
+                        </button>
+                        <a href="https://ctftime.org/team/382459/" target="_blank" class="px-8 py-4 bg-transparent border border-joker-purple text-joker-purple hover:bg-joker-purple/10 font-bold font-mono uppercase tracking-wider transition-colors">
+                            CTFtime Profile
+                        </a>
+                    </div>
+                </div>
+                <div class="lg:col-span-5 w-full">
+                    <div class="joker-border bg-black p-1 shadow-2xl shadow-joker-purple/10">
+                        <div class="hacker-terminal p-4 h-full min-h-[400px] flex flex-col font-mono text-xs md:text-sm">
+                            <div class="flex justify-between items-center border-b border-white/10 pb-2 mb-4 text-[10px] text-slate-500 uppercase tracking-widest">
+                                <span class="neon-green">root@moonlitcipher</span>
+                                <span>STATUS: ELITE</span>
+                            </div>
+                            <div class="flex-1 overflow-hidden space-y-2">
+                                <div class="text-slate-400">Initializing elite team protocol...</div>
+                                <div class="text-slate-400">Loading member database... <span class="neon-green">[OK]</span></div>
+                                <div class="text-slate-400">Connecting to CTF servers...</div>
+                                <div class="pl-4 text-slate-500">CTFd: CONNECTED</div>
+                                <div class="pl-4 text-slate-500">HTB: CONNECTED</div>
+                                <br/>
+                                <div class="text-white">root@moonlit:~# <span class="neon-green">./team_stats.sh</span></div>
+                                <div class="neon-green">
+                                    ----------------------------------------<br/>
+                                    MOONLITCIPHER TEAM STATISTICS<br/>
+                                    ----------------------------------------
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mt-2 mb-2">
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px]">TOTAL MEMBERS</span>
+                                        <div class="text-white text-xl font-bold">11</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px]">CORE MEMBERS</span>
+                                        <div class="text-white text-xl font-bold">8</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px]">CTF EVENTS</span>
+                                        <div class="text-white text-xl font-bold">29+</div>
+                                    </div>
+                                    <div>
+                                        <span class="text-slate-500 block text-[10px]">CTF POINTS</span>
+                                        <div class="text-white text-xl font-bold">77,800+</div>
+                                    </div>
+                                </div>
+                                <div class="text-slate-400 mt-2">> Best CTF: 0xTictf 2025</div>
+                                <div class="text-slate-400">> Placement: 11th • Points: 47,630</div>
+                                <div class="text-white mt-4 blinking-cursor">root@moonlit:~# _</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="absolute bottom-0 w-full border-t border-joker-purple/20 bg-gradient-to-r from-transparent via-joker-purple/10 to-transparent py-2 overflow-hidden">
+            <div class="flex whitespace-nowrap gap-12 animate-marquee text-[10px] font-mono neon-green uppercase tracking-widest">
+                <span>0xTictf 2025 - 11th Place | CTF Points: 47,630 | ELITE PERFORMANCE</span>
+                <span class="neon-pink">///</span>
+                <span>l3m0nctf - 23rd Place | CTF Points: 8,225 | EXCELLENT RANKING</span>
+                <span class="neon-purple">///</span>
+                <span>Pentathon 2025 - 29th Place | CTF Points: 5,761 | TOP 30 FINISH</span>
+                <span class="neon-teal">///</span>
+                <span>enigma - 14th Place | CTF Points: 1,912 | TOP 15 FINISH</span>
+                <span class="neon-pink">///</span>
+                <span>CTF Quest - 26th Place | CTF Points: 2,008 | CONSISTENT PERFORMANCE</span>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTF Records Section -->
+    <section id="ctfs" class="py-24 bg-background-dark relative">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6 border-b border-white/10 pb-6">
+                <div>
+                    <h2 class="neon-pink font-mono text-xs font-bold tracking-widest uppercase mb-2">// COMPETITION RECORDS</h2>
+                    <h3 class="text-3xl md:text-4xl font-mono font-bold text-white uppercase">CTF <span class="neon-green glow-text">Performance</span></h3>
+                </div>
+                <div class="neon-green text-xs font-mono uppercase tracking-wider">
+                    TOTAL POINTS: <span class="text-xl">77,800+</span>
+                </div>
+            </div>
+            
+            <!-- Moonlitcipher CTFs - Complete History -->
+            <div class="mb-12">
+                <h3 class="text-xl font-mono font-bold text-white mb-6 flex items-center">
+                    <span class="neon-purple">Moonlitcipher Complete Events</span>
+                    <span class="ml-2 text-xs px-2 py-1 bg-joker-purple/20 border border-joker-purple/40 text-joker-purple">24+ Events • 2025-2026</span>
+                </h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-left text-slate-300">
+                        <thead class="text-xs uppercase bg-card-dark border-b border-white/10">
+                            <tr>
+                                <th class="px-4 py-3">Year</th>
+                                <th class="px-4 py-3">Event</th>
+                                <th class="px-4 py-3">Rank</th>
+                                <th class="px-4 py-3">CTF Points</th>
+                                <th class="px-4 py-3">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Top Performances -->
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors bg-gradient-to-r from-joker-purple/5 to-transparent">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">0xTictf</span>
+                                    <span class="ml-2 text-[10px] text-joker-green bg-joker-green/10 px-1 py-0.5 rounded">TOP TIER</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold text-xl neon-green">11</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono font-bold text-white">47,630</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors bg-gradient-to-r from-joker-purple/5 to-transparent">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">l3m0nctf</span>
+                                    <span class="ml-2 text-[10px] text-joker-pink bg-joker-pink/10 px-1 py-0.5 rounded">EXCELLENT</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold text-xl neon-pink">23</span>
+                                    <span class="text-slate-500 text-xs ml-1">rd</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono font-bold text-white">8,225</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">Pentathon 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold text-lg">29</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">5,761</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- Additional Top Performances -->
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">yukthi</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">36</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">4,978</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">enigma</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">14</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">1,912</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">CTF Quest</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">26</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">2,008</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- Events with placements only -->
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">Binary Forge</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">17</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono text-slate-500">-</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-purple">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">exploitxctf</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">23</span>
+                                    <span class="text-slate-500 text-xs ml-1">rd</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono text-slate-500">-</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- 2026 Events -->
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-green">2026</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">New Year CTF 2026</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">343</span>
+                                    <span class="text-slate-500 text-xs ml-1">rd</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">250</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-green">2026</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">UofTCTF 2026</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">954</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">64</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-green">2026</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">Scarlet CTF 2026</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">407</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">432</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- Additional 2025 Events from previous data -->
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">niteCTF 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">1,011</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">50</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">NexHunt CTF</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">585</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">100</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">H7CTF 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">386</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">500</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">K17 CTF</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">532</span>
+                                    <span class="text-slate-500 text-xs ml-1">nd</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">312</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">CSAW CTF Qualification Round 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">374</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">10</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">scriptCTF 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">437</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">1,499</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">BDSec CTF 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">524</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">100</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">BSidesSF 2025 CTF</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">199</span>
+                                    <span class="text-slate-500 text-xs ml-1">th</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">600</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">CTF@CIT 2025</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono font-bold">261</span>
+                                    <span class="text-slate-500 text-xs ml-1">st</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono">7,379</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-green-900/30 border border-green-500/30 text-green-400 rounded">COMPLETED</span>
+                                </td>
+                            </tr>
+                            
+                            <!-- Other mentioned events without specific data -->
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">ISEActf</span>
+                                    <span class="ml-2 text-[10px] text-slate-500 bg-slate-800/30 px-1 py-0.5 rounded">PARTICIPATED</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono text-slate-500">-</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono text-slate-500">-</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-blue-900/30 border border-blue-500/30 text-blue-400 rounded">PARTICIPATED</span>
+                                </td>
+                            </tr>
+                            
+                            <tr class="border-b border-white/5 hover:bg-joker-purple/5 transition-colors">
+                                <td class="px-4 py-3 font-bold neon-pink">2025</td>
+                                <td class="px-4 py-3">
+                                    <span class="font-bold text-white">flagquest</span>
+                                    <span class="ml-2 text-[10px] text-slate-500 bg-slate-800/30 px-1 py-0.5 rounded">PARTICIPATED</span>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="font-mono text-slate-500">-</span>
+                                </td>
+                                <td class="px-4 py-3 font-mono text-slate-500">-</td>
+                                <td class="px-4 py-3">
+                                    <span class="text-[10px] px-2 py-1 bg-blue-900/30 border border-blue-500/30 text-blue-400 rounded">PARTICIPATED</span>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot class="bg-card-dark border-t border-white/10">
+                            <tr>
+                                <td colspan="2" class="px-4 py-3 font-bold text-right">Moonlitcipher Total (Calculated):</td>
+                                <td class="px-4 py-3 font-mono">-</td>
+                                <td class="px-4 py-3 font-mono font-bold text-2xl neon-purple">~76,850+</td>
+                                <td class="px-4 py-3 font-mono font-bold text-neon-green">24+ EVENTS</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Performance Highlights -->
+            <div class="mb-12">
+                <h3 class="text-xl font-mono font-bold text-white mb-6">Performance Highlights</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-joker-green/10 to-transparent p-6 border border-joker-green/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-white text-lg font-bold">Top Ranking</h4>
+                            <span class="text-3xl font-bold neon-green">11th</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-3">0xTictf 2025</p>
+                        <div class="text-slate-500 text-xs">47,630 CTF Points</div>
+                        <div class="mt-4">
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1">ELITE PERFORMANCE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-joker-purple/10 to-transparent p-6 border border-joker-purple/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-white text-lg font-bold">Highest Points</h4>
+                            <span class="text-3xl font-bold neon-purple">47,630</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-3">0xTictf 2025</p>
+                        <div class="text-slate-500 text-xs">Rank: 11th Place</div>
+                        <div class="mt-4">
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1">RECORD SCORE</span>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-br from-joker-pink/10 to-transparent p-6 border border-joker-pink/30 rounded-lg">
+                        <div class="flex items-center justify-between mb-4">
+                            <h4 class="text-white text-lg font-bold">Most Top 50 Finishes</h4>
+                            <span class="text-3xl font-bold neon-pink">8+</span>
+                        </div>
+                        <p class="text-slate-400 text-sm mb-3">Multiple Events</p>
+                        <div class="text-slate-500 text-xs">Consistent elite performance</div>
+                        <div class="mt-4">
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1">CONSISTENT EXCELLENCE</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Team Network Section -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Sakura Sentinels CTFs -->
+                <div>
+                    <h3 class="text-xl font-mono font-bold text-white mb-6 flex items-center">
+                        <span class="neon-pink">Sakura Sentinels Events</span>
+                        <span class="ml-2 text-xs px-2 py-1 bg-joker-pink/20 border border-joker-pink/40 text-joker-pink">2025 • 4 Events</span>
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="ctf-card bg-card-dark p-6 border border-joker-pink/30 rounded">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-white text-lg font-bold">128sknbCTF 2025</h4>
+                                    <p class="text-slate-500 text-sm">Sakura Sentinels participation</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold neon-pink">128</div>
+                                    <div class="text-slate-500 text-xs">Rank</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <div class="text-slate-500 text-xs">CTF Points</div>
+                                    <div class="text-white font-mono">300.000</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-500 text-xs">Rating Points</div>
+                                    <div class="text-white font-mono">1.854</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ctf-card bg-card-dark p-6 border border-joker-pink/30 rounded">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-white text-lg font-bold">DeadSec CTF 2025</h4>
+                                    <p class="text-slate-500 text-sm">Sakura Sentinels participation</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold neon-pink">584</div>
+                                    <div class="text-slate-500 text-xs">Rank</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <div class="text-slate-500 text-xs">CTF Points</div>
+                                    <div class="text-white font-mono">50.000</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-500 text-xs">Rating Points</div>
+                                    <div class="text-white font-mono">0.225</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ctf-card bg-card-dark p-6 border border-joker-pink/30 rounded">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-white text-lg font-bold">Junior.Crypt.2025 CTF</h4>
+                                    <p class="text-slate-500 text-sm">Sakura Sentinels participation</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold neon-pink">551</div>
+                                    <div class="text-slate-500 text-xs">Rank</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <div class="text-slate-500 text-xs">CTF Points</div>
+                                    <div class="text-white font-mono">200.000</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-500 text-xs">Rating Points</div>
+                                    <div class="text-white font-mono">0.450</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ctf-card bg-card-dark p-6 border border-joker-pink/30 rounded">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-white text-lg font-bold">MaltaCTF 2025 Quals</h4>
+                                    <p class="text-slate-500 text-sm">Sakura Sentinels participation</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold neon-pink">343</div>
+                                    <div class="text-slate-500 text-xs">Rank</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <div class="text-slate-500 text-xs">CTF Points</div>
+                                    <div class="text-white font-mono">100.000</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-500 text-xs">Rating Points</div>
+                                    <div class="text-white font-mono">0.522</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-card-dark p-4 border border-joker-pink/30 rounded">
+                            <div class="flex justify-between items-center">
+                                <div class="text-slate-500 text-sm">Sakura Sentinels Total:</div>
+                                <div class="font-mono font-bold">
+                                    <span class="neon-pink">650.000</span> CTF Points
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Psychglitch & Network Summary -->
+                <div>
+                    <!-- Psychglitch CTF -->
+                    <div class="mb-8">
+                        <h4 class="text-lg font-mono font-bold text-white mb-4 flex items-center">
+                            <span class="neon-teal">Psychglitch Events</span>
+                            <span class="ml-2 text-xs px-2 py-1 bg-joker-teal/20 border border-joker-teal/40 text-joker-teal">2025 • 1 Event</span>
+                        </h4>
+                        <div class="ctf-card bg-card-dark p-6 border border-joker-teal/30 rounded">
+                            <div class="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 class="text-white text-lg font-bold">DawgCTF 2025</h4>
+                                    <p class="text-slate-500 text-sm">Psychglitch participation</p>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-2xl font-bold neon-teal">551</div>
+                                    <div class="text-slate-500 text-xs">Rank</div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 mt-4">
+                                <div>
+                                    <div class="text-slate-500 text-xs">CTF Points</div>
+                                    <div class="text-white font-mono">300.000</div>
+                                </div>
+                                <div>
+                                    <div class="text-slate-500 text-xs">Rating Points</div>
+                                    <div class="text-white font-mono">1.485</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Network Summary -->
+                    <div class="bg-gradient-to-br from-card-dark to-[#0d0d15] p-6 border border-white/10 rounded">
+                        <h4 class="text-lg font-mono font-bold text-white mb-4">Team Network Summary</h4>
+                        <div class="space-y-4">
+                            <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                                <div class="text-slate-400">Moonlitcipher</div>
+                                <div class="font-mono font-bold">
+                                    <span class="neon-purple">~76,850+</span> pts
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                                <div class="text-slate-400">Sakura Sentinels</div>
+                                <div class="font-mono">
+                                    <span class="neon-pink">650</span> pts
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center pb-3 border-b border-white/5">
+                                <div class="text-slate-400">Psychglitch</div>
+                                <div class="font-mono">
+                                    <span class="neon-teal">300</span> pts
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center pt-3 border-t border-white/10">
+                                <div class="text-white font-bold">Network Total</div>
+                                <div class="font-mono font-bold text-2xl neon-green">
+                                    ~77,800+ pts
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-6 text-center text-slate-500 text-sm">
+                            29+ events across 3 teams • 2025-2026
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- CTF Stats Summary -->
+            <div class="mt-16 grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div class="border-l border-joker-purple/20 pl-6">
+                    <div class="text-3xl font-bold text-white mb-1">29+</div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-500">Total Events</div>
+                </div>
+                <div class="border-l border-joker-pink/20 pl-6">
+                    <div class="text-3xl font-bold text-white mb-1">77,800+</div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-500">Total CTF Points</div>
+                </div>
+                <div class="border-l border-joker-teal/20 pl-6">
+                    <div class="text-3xl font-bold text-white mb-1">11</div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-500">Best Ranking</div>
+                </div>
+                <div class="border-l border-joker-green/20 pl-6">
+                    <div class="text-3xl font-bold text-white mb-1">3</div>
+                    <div class="text-[10px] uppercase tracking-widest text-slate-500">Active Teams</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Members Section -->
+    <section id="members" class="py-20 bg-background-darker border-y border-border-dim">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-4 uppercase">Team <span class="neon-purple">Members</span></h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">11 registered CTFtime members with 8 core members leading the team's operations</p>
+                <div class="h-px w-24 bg-gradient-to-r from-joker-purple to-joker-green mx-auto mt-6"></div>
+            </div>
+            
+            <!-- Core Members -->
+            <div class="mb-12">
+                <h3 class="text-xl font-mono font-bold text-white mb-8 flex items-center">
+                    <span class="neon-green">Core Members</span>
+                    <span class="ml-4 text-xs px-3 py-1 core-member-badge rounded">8 Members</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <!-- TraceHanami Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-green/30 hover:border-joker-green transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-green bg-gradient-to-br from-joker-green/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-green text-2xl">security</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">TraceHanami</p>
+                                <p class="text-slate-500 text-xs">Core Member - Web, Forensics, Crypto</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-green animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-green font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Specializes in web exploitation challenges, forensic analysis, and cryptographic puzzles. 
+                            Key contributor to multiple CTF challenges across all major categories.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Web Exploitation</span>
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1 bg-joker-purple/10">Forensics</span>
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">Cryptography</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/230181" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher • Sakura Sentinels
+                            </div>
+                            <span class="text-joker-green text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+                    
+                    <!-- BlackFairy Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-pink/30 hover:border-joker-pink transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-pink bg-gradient-to-br from-joker-pink/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-pink text-2xl">auto_fix</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">BlackFairy</p>
+                                <p class="text-slate-500 text-xs">Core Member - Cryptography, OSINT, Web</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-pink animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-pink font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Expert in cryptographic challenges, open source intelligence gathering, and web security vulnerabilities.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">Cryptography</span>
+                            <span class="text-[10px] border border-joker-teal/30 text-joker-teal px-2 py-1 bg-joker-teal/10">OSINT</span>
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Web</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/224421" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher • Sakura Sentinels
+                            </div>
+                            <span class="text-joker-pink text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+
+                    <!-- Nov@_ Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-purple/30 hover:border-joker-purple transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-purple bg-gradient-to-br from-joker-purple/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-purple text-2xl">code</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">Nov@_</p>
+                                <p class="text-slate-500 text-xs">Core Member - Cryptography, OSINT, Web</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-purple animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-purple font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Specializes in cryptographic analysis, open source intelligence techniques, and web application security.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1 bg-joker-purple/10">Cryptography</span>
+                            <span class="text-[10px] border border-joker-teal/30 text-joker-teal px-2 py-1 bg-joker-teal/10">OSINT</span>
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Web</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/250102" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher
+                            </div>
+                            <span class="text-joker-purple text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+
+                    <!-- whatever12207 Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-green/30 hover:border-joker-green transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-green bg-gradient-to-br from-joker-green/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-green text-2xl">psychology</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">whatever12207</p>
+                                <p class="text-slate-500 text-xs">Core Member - Web, Pwn, Reverse</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-green animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-green font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Expert in web exploitation, binary pwning challenges, and reverse engineering of complex systems.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Web</span>
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">Pwn</span>
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1 bg-joker-purple/10">Reverse</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/250103" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher
+                            </div>
+                            <span class="text-joker-green text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+
+                    <!-- S@NDY Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-teal/30 hover:border-joker-teal transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-teal bg-gradient-to-br from-joker-teal/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-teal text-2xl">data_object</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">S@NDY</p>
+                                <p class="text-slate-500 text-xs">Core Member - Web, Forensics, OSINT</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-teal animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-teal font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Specializes in web security, digital forensics investigations, and open source intelligence gathering.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-teal/30 text-joker-teal px-2 py-1 bg-joker-teal/10">Web</span>
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1 bg-joker-purple/10">Forensics</span>
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">OSINT</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/250105" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher • Sakura Sentinels
+                            </div>
+                            <span class="text-joker-teal text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+
+                    <!-- Asta_black Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-purple/30 hover:border-joker-purple transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-purple bg-gradient-to-br from-joker-purple/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-purple text-2xl">memory</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">Asta_black</p>
+                                <p class="text-slate-500 text-xs">Core Member - Reverse, Pwn, Binary Exploitation</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-purple animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-purple font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Focuses on reverse engineering, binary exploitation challenges, and memory corruption vulnerabilities.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1 bg-joker-purple/10">Reverse</span>
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">Pwn</span>
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Binary Exploitation</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/249872" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher • Sakura Sentinels
+                            </div>
+                            <span class="text-joker-purple text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+
+                    <!-- JOKER53 Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-pink/30 hover:border-joker-pink transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-pink bg-gradient-to-br from-joker-pink/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-pink text-2xl">terminal</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">JOKER53</p>
+                                <p class="text-slate-500 text-xs">Core Member - Web, Reverse, Pwn</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-pink animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-pink font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Versatile security researcher with skills in web exploitation, reverse engineering, and pwning challenges.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">Web</span>
+                            <span class="text-[10px] border border-joker-purple/30 text-joker-purple px-2 py-1 bg-joker-purple/10">Reverse</span>
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Pwn</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="http://ctftime.org/user/232402" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher • Sakura Sentinels
+                            </div>
+                            <span class="text-joker-pink text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+
+                    <!-- DUSTIN05 Member Card -->
+                    <div class="group bg-card-dark p-6 border border-joker-teal/30 hover:border-joker-teal transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-16 h-16 rounded-full border-2 border-joker-teal bg-gradient-to-br from-joker-teal/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-joker-teal text-2xl">encrypted</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-lg font-bold uppercase tracking-wider">DUSTIN05</p>
+                                <p class="text-slate-500 text-xs">Core Member - Cryptography, OSINT, Web</p>
+                                <div class="inline-flex items-center gap-1 mt-1">
+                                    <span class="w-2 h-2 rounded-full bg-joker-teal animate-pulse"></span>
+                                    <span class="text-[10px] text-joker-teal font-mono">CORE MEMBER</span>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Skilled in cryptographic challenges, open source intelligence, and web application security testing.
+                        </p>
+                        <div class="flex gap-2 flex-wrap mb-4">
+                            <span class="text-[10px] border border-joker-teal/30 text-joker-teal px-2 py-1 bg-joker-teal/10">Cryptography</span>
+                            <span class="text-[10px] border border-joker-pink/30 text-joker-pink px-2 py-1 bg-joker-pink/10">OSINT</span>
+                            <span class="text-[10px] border border-joker-green/30 text-joker-green px-2 py-1 bg-joker-green/10">Web</span>
+                        </div>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/232556" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher • Sakura Sentinels
+                            </div>
+                            <span class="text-joker-teal text-lg opacity-0 group-hover:opacity-100 transition-opacity">→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Active Members -->
+            <div>
+                <h3 class="text-xl font-mono font-bold text-white mb-8 flex items-center">
+                    <span class="neon-teal">Active Members</span>
+                    <span class="ml-4 text-xs px-3 py-1 border border-joker-teal/40 text-joker-teal bg-joker-teal/5 rounded">3 Members</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="group bg-card-dark p-6 border border-gray-600/30 hover:border-joker-teal/30 transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full border-2 border-gray-600 bg-gradient-to-br from-gray-600/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-gray-400">person</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-md font-bold uppercase tracking-wider">NithirX0</p>
+                                <p class="text-slate-500 text-xs">Active Member</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Contributing team member with diverse CTF skills and ongoing development in security domains.
+                        </p>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/XXXXX" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Moonlitcipher
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group bg-card-dark p-6 border border-gray-600/30 hover:border-joker-teal/30 transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full border-2 border-gray-600 bg-gradient-to-br from-gray-600/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-gray-400">visibility</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-md font-bold uppercase tracking-wider">QuantumFade</p>
+                                <p class="text-slate-500 text-xs">Active Member</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Team member focusing on quantum cryptography concepts and advanced security methodologies.
+                        </p>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/XXXXX" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Sakura Sentinels • Psychglitch
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="group bg-card-dark p-6 border border-gray-600/30 hover:border-joker-teal/30 transition-all duration-300">
+                        <div class="flex items-center gap-4 mb-4">
+                            <div class="w-12 h-12 rounded-full border-2 border-gray-600 bg-gradient-to-br from-gray-600/20 to-transparent flex items-center justify-center">
+                                <span class="material-symbols-outlined text-gray-400">shield</span>
+                            </div>
+                            <div>
+                                <p class="text-white text-md font-bold uppercase tracking-wider">ObscuraX</p>
+                                <p class="text-slate-500 text-xs">Active Member</p>
+                            </div>
+                        </div>
+                        <p class="text-slate-400 text-sm leading-relaxed mb-4">
+                            Security enthusiast with focus on obfuscation techniques and defensive security strategies.
+                        </p>
+                        <div class="flex gap-2 mb-4">
+                            <a href="#" class="social-icon github-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-github text-sm"></i>
+                            </a>
+                            <a href="#" class="social-icon linkedin-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fab fa-linkedin-in text-sm"></i>
+                            </a>
+                            <a href="https://ctftime.org/user/XXXXX" target="_blank" class="social-icon ctftime-icon w-8 h-8 flex items-center justify-center border border-white/10 hover:border-white text-slate-400 hover:text-white transition-all rounded">
+                                <i class="fas fa-flag text-sm"></i>
+                            </a>
+                        </div>
+                        <div class="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                            <div class="text-[10px] text-slate-600">
+                                CTF Teams: Sakura Sentinels • Psychglitch
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Skills Section -->
+    <section id="skills" class="py-24 bg-background-dark">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-mono font-bold text-white mb-4 uppercase">Team <span class="neon-pink">Expertise</span></h2>
+                <p class="text-slate-500 max-w-2xl mx-auto">Comprehensive skills across all major CTF categories with core strengths in multiple domains</p>
+                <div class="h-px w-24 bg-gradient-to-r from-joker-purple to-joker-pink mx-auto mt-6"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-card-dark p-6 border border-joker-green/20">
+                    <div class="neon-green text-3xl mb-4">01</div>
+                    <h3 class="text-white text-lg font-bold mb-2 uppercase">Cryptography</h3>
+                    <p class="text-slate-400 text-sm">RSA, ECC, custom ciphers, cryptographic analysis, and mathematical CTF challenges.</p>
+                    <div class="mt-4 text-[10px] text-joker-green">Core: BlackFairy, Nov@_, DUSTIN05</div>
+                </div>
+                <div class="bg-card-dark p-6 border border-joker-purple/20">
+                    <div class="neon-purple text-3xl mb-4">02</div>
+                    <h3 class="text-white text-lg font-bold mb-2 uppercase">Web Exploitation</h3>
+                    <p class="text-slate-400 text-sm">XSS, SQLi, CSRF, SSTI, JWT attacks, and advanced web application security.</p>
+                    <div class="mt-4 text-[10px] text-joker-purple">Core: TraceHanami, whatever12207, JOKER53</div>
+                </div>
+                <div class="bg-card-dark p-6 border border-joker-pink/20">
+                    <div class="neon-pink text-3xl mb-4">03</div>
+                    <h3 class="text-white text-lg font-bold mb-2 uppercase">Binary Exploitation</h3>
+                    <p class="text-slate-400 text-sm">Buffer overflows, ROP chains, heap exploitation, and custom shellcode development.</p>
+                    <div class="mt-4 text-[10px] text-joker-pink">Core: whatever12207, Asta_black, JOKER53</div>
+                </div>
+                <div class="bg-card-dark p-6 border border-joker-teal/20">
+                    <div class="neon-teal text-3xl mb-4">04</div>
+                    <h3 class="text-white text-lg font-bold mb-2 uppercase">Forensics & OSINT</h3>
+                    <p class="text-slate-400 text-sm">Memory analysis, network forensics, steganography, and open source intelligence gathering.</p>
+                    <div class="mt-4 text-[10px] text-joker-teal">Core: TraceHanami, S@NDY, BlackFairy</div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer id="contact" class="py-12 border-t border-border-dim bg-background-darker">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-8">
+                <div class="flex flex-col gap-2">
+                    <div class="flex items-center gap-2">
+                        <span class="neon-green font-bold">&gt;</span>
+                        <span class="font-mono font-bold text-xl tracking-tight text-white uppercase">
+                            <span class="neon-purple">MOONLIT</span>CIPHER
+                        </span>
+                    </div>
+                    <p class="text-slate-500 text-xs max-w-xs">Elite CTF Team • 29+ Events • 77,800+ CTF Points • 11 Members</p>
+                </div>
+                <div class="flex flex-wrap gap-6 text-xs font-mono text-slate-500 uppercase tracking-wider">
+                    <a class="hover:neon-green transition-colors" href="https://ctftime.org/team/382459/" target="_blank">[ CTFtime Profile ]</a>
+                    <a class="hover:neon-purple transition-colors" href="#">[ Writeups ]</a>
+                    <a class="hover:neon-pink transition-colors" href="#">[ GitHub ]</a>
+                    <a class="hover:neon-teal transition-colors" href="#">[ Contact ]</a>
+                </div>
+            </div>
+            <div class="border-t border-white/5 pt-8 text-center">
+                <p class="text-slate-600 text-[10px] font-mono uppercase">
+                    © 2025-2026 MOONLITCIPHER CTF TEAM. ALL CTF PARTICIPATION ETHICAL AND EDUCATIONAL.
+                </p>
+                <div class="flex items-center justify-center gap-4 mt-4">
+                    <div class="flex items-center gap-2">
+                        <span class="h-1.5 w-1.5 rounded-full bg-joker-green shadow-[0_0_8px_#00ff41] animate-pulse-glow"></span>
+                        <span class="text-[10px] font-mono text-joker-green">ELITE STATUS</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="h-1.5 w-1.5 rounded-full bg-joker-purple shadow-[0_0_8px_#8000ff] animate-pulse-glow"></span>
+                        <span class="text-[10px] font-mono text-joker-purple">77,800+ POINTS</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="h-1.5 w-1.5 rounded-full bg-joker-pink shadow-[0_0_8px_#ff00aa] animate-pulse-glow"></span>
+                        <span class="text-[10px] font-mono text-joker-pink">8 CORE MEMBERS</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Simple terminal typing effect
+        document.addEventListener('DOMContentLoaded', function() {
+            const cursor = document.querySelector('.blinking-cursor');
+            if (cursor) {
+                const commands = [
+                    'root@moonlit:~# ./team_status.sh',
+                    'Checking elite team status...',
+                    '[+] Core Members: 8 online',
+                    '[+] Active Members: 3 online',
+                    '[+] Total Members: 11 registered',
+                    '[+] CTF Events: 29+ competitions',
+                    '[+] Total CTF Points: 77,800+',
+                    '[+] Best Performance: 11th place (0xTictf)',
+                    '[ELITE] Moonlitcipher team operational at maximum capacity',
+                    'root@moonlit:~# '
+                ];
+                
+                let cmdIndex = 0;
+                let charIndex = 0;
+                let isDeleting = false;
+                let currentText = '';
+                
+                function typeEffect() {
+                    const currentCmd = commands[cmdIndex];
+                    
+                    if (!isDeleting && charIndex <= currentCmd.length) {
+                        currentText = currentCmd.substring(0, charIndex);
+                        cursor.innerHTML = currentText + '<span class="blinking-cursor"></span>';
+                        charIndex++;
+                        setTimeout(typeEffect, 50);
+                    } else if (isDeleting && charIndex >= 0) {
+                        currentText = currentCmd.substring(0, charIndex);
+                        cursor.innerHTML = currentText + '<span class="blinking-cursor"></span>';
+                        charIndex--;
+                        setTimeout(typeEffect, 30);
+                    } else {
+                        isDeleting = !isDeleting;
+                        if (!isDeleting) {
+                            cmdIndex = (cmdIndex + 1) % commands.length;
+                        }
+                        setTimeout(typeEffect, 1500);
+                    }
+                }
+                
+                // Start typing after a delay
+                setTimeout(typeEffect, 2000);
+            }
+            
+            // Smooth scrolling for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+            
+            // Add hover effects for social icons
+            document.querySelectorAll('.github-icon').forEach(icon => {
+                icon.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = '#333';
+                    this.style.color = '#ffffff';
+                });
+                icon.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                    this.style.color = '';
+                });
+            });
+            
+            document.querySelectorAll('.linkedin-icon').forEach(icon => {
+                icon.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(0, 119, 181, 0.1)';
+                    this.style.color = '#0077b5';
+                });
+                icon.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                    this.style.color = '';
+                });
+            });
+            
+            document.querySelectorAll('.ctftime-icon').forEach(icon => {
+                icon.addEventListener('mouseenter', function() {
+                    this.style.backgroundColor = 'rgba(255, 107, 0, 0.1)';
+                    this.style.color = '#ff6b00';
+                });
+                icon.addEventListener('mouseleave', function() {
+                    this.style.backgroundColor = '';
+                    this.style.color = '';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
