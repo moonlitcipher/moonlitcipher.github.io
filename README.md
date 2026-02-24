@@ -1,4 +1,4 @@
-# MoonlitCipher 
+# MoonlitCipher (Sakura Sentinels)
 
 **MoonlitCipher** is a Capture The Flag (CTF) team that thrives in low-visibility problems—  
 where intent is obscured, signals are faint, and precision matters most.
