@@ -18,12 +18,12 @@ We solve challenges not through brute force, but by *reading what others overloo
 ---
 
 ## Team Ethos
-
+```
 - Precision over speed  
 - Understanding over guessing  
 - Signal extraction in hostile noise  
 - Learning through failure, refining through discipline  
-
+```
 MoonlitCipher operates where clarity is scarce—and that’s where we are strongest.
 
 ---
