@@ -8,7 +8,7 @@ We focus on disciplined, methodical analysis across core offensive and investiga
 - Cryptography  
 - Web Exploitation  
 - Reverse Engineering  
-- Binary Exploitation (Pwn)  
+- Binary Exploitation(Pwn)  
 - Digital Forensics  
 - OSINT  
 
