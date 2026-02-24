@@ -4,14 +4,14 @@
 where intent is obscured, signals are faint, and precision matters most.
 
 We focus on disciplined, methodical analysis across core offensive and investigative domains:
-
+```
 - Cryptography  
 - Web Exploitation  
 - Reverse Engineering  
 - Binary Exploitation(Pwn)  
 - Digital Forensics  
 - OSINT  
-
+```
 Our philosophy values **quiet rigor, collaboration, and mastery over noise**.  
 We solve challenges not through brute force, but by *reading what others overlook*.
 
@@ -36,3 +36,6 @@ You are free to use, modify, distribute, or build upon it without restriction.
 ---
 
 *Low light. Sharp minds.*
+
+
+```Msg From Joker : Why So Serious.....................................```
